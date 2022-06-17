@@ -1,0 +1,686 @@
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<head>
+<title>Dashboard</title>
+</head>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/echarts.min.js"></script>
+<script type="text/javascript" src="js/echarts-gl.min.js"></script>
+<script type="text/javascript" src="js/ecStat.min.js"></script>
+<script type="text/javascript" src="js/dataTool.min.js"></script>
+<script type="text/javascript" src="js/china.js"></script>
+<script type="text/javascript" src="js/world.js"></script>
+<script type="text/javascript" src="js/bmap.min.js"></script>
+<script type="text/javascript" src="js/simplex.js"></script>
+<style>
+body{
+background-color:DarkGray;
+}
+#adiv,#bdiv,#cdiv,#ddiv,#ediv,#fdiv,#gdiv{
+background:windowframe;
+}
+</style>
+<body>
+<div id="status" style="width:100%;height:5%;background:#D3D3D3;text-align:center;"></div>
+<div class="a">
+	<div id="adiv" style="width:calc(100%/3);height:calc(95%/3);float:left;"></div>
+	<div id="bdiv" style="width:calc(100%/3);height:calc(95%/3);float:left;"></div>
+	<div id="cdiv" style="width:calc(100%/3);height:calc(95%/3);float:left;"></div>
+</div>
+<div class="b">
+	<div id="ddiv" style="width:calc(100%/2);height:calc(95%/3);float:left"></div>
+	<div id="ediv" style="width:calc(100%/2);height:calc(95%/3);float:left"></div>
+</div>
+<div class="c">
+	<div id="fdiv" style="width:calc(100%/2);height:calc(95%/3);float:left"></div>
+	<div id="gdiv" style="width:calc(100%/2);height:calc(95%/3);float:left"></div>
+</div>
+<script type="text/javascript">
+$(window).resize( function (){
+     location.reload()
+});
+function bar0(run_time,lastest_time,cpu_temp)
+{
+	document.getElementById("status").innerHTML="运行时间: " + run_time + " --- 更新时间: " + lastest_time + " --- CPU温度: " + cpu_temp + "ºC";
+};
+function bar1(last1,last5,last15){
+var aChart= echarts.init(document.getElementById("adiv"));
+option = {
+	    backgroundColor:"#D3D3D3",
+	    title: {
+	        text: '平均负载',
+	        left:"center"
+	    },
+	    tooltip: {
+	        trigger: 'axis',
+	        axisPointer: { // 坐标轴指示器，坐标轴触发有效
+	            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+	        }
+	    },
+	    grid: {
+	        top:"80",
+	        left: '3%',
+	        right: '4%',
+	        bottom: '3%',
+	        containLabel: true
+	    },
+	    xAxis: [{
+	        type: 'category',
+	        axisTick:{
+	           show:false  
+	        },
+	         data: ['最近1分钟','最近5分钟','最近15分钟']
+	    }],
+	    yAxis: [{
+	        type: 'value',
+	        axisLine:{
+	            show:true
+	        },
+	        axisTick:{
+	           show:false  
+	        },
+	        axisLabel: {
+	            show:true,
+	            formatter: '{value}'
+	        },
+	        splitLine: {
+				show:false,
+			}
+	    }],
+	    series: [{
+	        type: 'line',
+	        label: {
+	            show: true,
+	            position: 'top',
+	            textStyle: {
+	                color: '#000000',
+	            },
+	        },
+	        itemStyle: {
+                normal: {
+                    color: function(params) {
+                        var colorListr = [
+                            '#00adb5',
+                            '#ff5722',
+                            '#5628b4'
+                        ];
+                        return colorListr[params.dataIndex]
+                    },
+                    label: {
+                        show: true,
+                        position: 'top',
+                        formatter: '{c}',
+                        fontSize:14
+                    },
+                    shadowBlur: 10,
+                    shadowColor: 'rgba(40, 40, 40, 0.3)',
+                }
+            },
+	        data: [last1, last5, last15]
+	    }]
+	};
+aChart.setOption(option);
+};
+function bar2(cpu_usage,mem_usage,disk_usage){
+var bChart= echarts.init(document.getElementById("bdiv"));
+option = {
+	    backgroundColor:"#D3D3D3",
+	    title: {
+	        text: '使用率',
+	        left:"center"
+	    },
+	    tooltip: {
+	        trigger: 'axis',
+	        axisPointer: { // 坐标轴指示器，坐标轴触发有效
+	            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+	        }
+	    },
+	    grid: {
+	        top:"80",
+	        left: '3%',
+	        right: '4%',
+	        bottom: '3%',
+	        containLabel: true
+	    },
+	    xAxis: [{
+	        type: 'category',
+	        axisTick:{
+	           show:false  
+	        },
+	         data: ['CPU','RAM','DISK']
+	    }],
+	    yAxis: [{
+	        type: 'value',
+	        axisLine:{
+	            show:true
+	        },
+	        axisTick:{
+	           show:false  
+	        },
+	        axisLabel: {
+	            show:true,
+	            formatter: '{value}%'
+	        },
+	        splitLine: {
+				show:false,
+			}
+	    }],
+	    series: [{
+	        type: 'bar',
+	        label: {
+	            show: true,
+	            position: 'top',
+	            textStyle: {
+	                color: '#000000',
+	            },
+	        },
+	        itemStyle: {
+                normal: {
+                    color: function(params) {
+                        var colorListr = [
+                            '#20BF55',
+                            '#f23557',
+                            '#118df0'
+                        ];
+                        return colorListr[params.dataIndex]
+                    },
+                    label: {
+                        show: true,
+                        position: 'top',
+                        formatter: '{c}%',
+                        fontSize:14
+                    },
+                    shadowBlur: 10,
+                    shadowColor: 'rgba(40, 40, 40, 0.3)',
+                }
+            },
+	        data: [cpu_usage,mem_usage,disk_usage]
+	    }]
+	};
+bChart.setOption(option);
+};
+function bar3(receive_speed,transmit_speed){
+var cChart= echarts.init(document.getElementById("cdiv"));
+option = {
+	    backgroundColor:"#D3D3D3",
+	    title: {
+	        text: '网络速率',
+	        left:"center"
+	    },
+	    tooltip: {
+	        trigger: 'axis',
+	        axisPointer: { // 坐标轴指示器，坐标轴触发有效
+	            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+	        }
+	    },
+	    grid: {
+	        top:"80",
+	        left: '3%',
+	        right: '4%',
+	        bottom: '3%',
+	        containLabel: true
+	    },
+	    xAxis: [{
+	        type: 'category',
+	        axisTick:{
+	           show:false  
+	        },
+	         data: ['接收','发送']
+	    }],
+	    yAxis: [{
+	        type: 'value',
+	        axisLine:{
+	            show:true
+	        },
+	        axisTick:{
+	           show:false  
+	        },
+	        axisLabel: {
+	            show:true,
+	            formatter: '{value}KB/s'
+	        },
+	        splitLine: {
+				show:false,
+			}
+	    }],
+	    series: [{
+	        type: 'bar',
+	        label: {
+	            show: true,
+	            position: 'top',
+	            textStyle: {
+	                color: '#000000',
+	            },
+	        },
+	        itemStyle: {
+                normal: {
+                    color: function(params) {
+                        var colorListr = [
+                            '#9acd23',
+                            '#ae318a'
+                        ];
+                        return colorListr[params.dataIndex]
+                    },
+                    label: {
+                        show: true,
+                        position: 'top',
+                        formatter: '{c}KB/s',
+                        fontSize:14
+                    },
+                    shadowBlur: 10,
+                    shadowColor: 'rgba(40, 40, 40, 0.3)',
+                }
+            },
+	        data: [receive_speed,transmit_speed]
+	    }]
+	};
+cChart.setOption(option);
+};
+function bar4(mem_used_space,mem_free_space,mem_available_space){
+var dChart = echarts.init(document.getElementById("ddiv"));
+option = {
+	backgroundColor:"#D3D3D3",
+	    title: {
+	        text: '内存状态',
+	        left:"center"
+	    },
+    tooltip: {
+        trigger: 'item',
+        formatter: e => {
+            return `
+                ${e.name}: ${e.data.value} MB<br/>
+            `
+        }
+    },
+    angleAxis: {
+        type: 'category',
+        // 去掉边线
+        axisLine: {
+            show: false
+        },
+    },
+    radiusAxis: {
+        max: 100,
+        // 去掉刻度线
+        axisLine: {
+            show: false
+        },
+        axisLabel: {
+            show: false
+        },
+        axisTick: {
+            show: false
+        },
+        splitLine: {
+            show: false
+        },
+    },
+    polar: {
+        radius: [0, '50%']
+    },
+    series: [
+        // 饼图
+        {
+            type: 'pie',
+            radius: [0, '50%'],
+            label: {
+                color: '#333',
+                lineHeight: 14,
+                formatter: e => {
+                    return `${e.name}: ${e.data.value} MB`
+                }
+            },
+            labelLine: {
+                length: 20,
+                lineStyle: {
+                    color: '#999'
+                }
+            },
+            itemStyle: {
+                borderWidth: 3,
+                borderColor: '#fff',
+                shadowColor: 'rgba(0, 0, 0, 0.2)',
+                shadowBlur: 6,
+                shadowOffsetY: 4
+            },
+            data: [
+                {
+                    value: mem_used_space,
+                     // 因为触发的是饼图的 tooltip，这里对应放极坐标的 data 值
+                    name: '已用',
+                    itemStyle: {
+                        color: 'rgba(138, 43, 226, 0.4)',
+                    }
+                },
+                {
+                    value: mem_free_space,
+                    name: '空闲',
+                    itemStyle: {
+                        color: 'rgba(95, 158, 160, 0.4)',
+                    }
+                },
+                {
+                    value: mem_available_space,
+                    name: '可用',
+                    itemStyle: {
+                        color: 'rgba(127, 255, 0, 0.4)',
+                    }
+                }
+            ],
+        }
+    ],
+};
+dChart.setOption(option);
+};
+function bar5(swap_used_space,swap_space){
+var eChart = echarts.init(document.getElementById("ediv"));
+option = {
+	backgroundColor:"#D3D3D3",
+	    title: {
+	        text: 'swap状态',
+	        left:"center"
+	    },
+    tooltip: {
+        trigger: 'item',
+        formatter: e => {
+            return `
+                ${e.name}: ${e.data.value} MB<br/>
+            `
+        }
+    },
+    angleAxis: {
+        type: 'category',
+        // 去掉边线
+        axisLine: {
+            show: false
+        },
+    },
+    radiusAxis: {
+        max: 100,
+        // 去掉刻度线
+        axisLine: {
+            show: false
+        },
+        axisLabel: {
+            show: false
+        },
+        axisTick: {
+            show: false
+        },
+        splitLine: {
+            show: false
+        },
+    },
+    polar: {
+        radius: [0, '50%']
+    },
+    series: [
+        // 饼图
+        {
+            type: 'pie',
+            radius: [0, '50%'],
+            label: {
+                color: '#333',
+                lineHeight: 14,
+                formatter: e => {
+                    return `${e.name}: ${e.data.value} MB`
+                }
+            },
+            labelLine: {
+                length: 20,
+                lineStyle: {
+                    color: '#999'
+                }
+            },
+            itemStyle: {
+                borderWidth: 3,
+                borderColor: '#fff',
+                shadowColor: 'rgba(0, 0, 0, 0.2)',
+                shadowBlur: 6,
+                shadowOffsetY: 4
+            },
+            data: [
+                {
+                    value: swap_used_space,
+                     // 因为触发的是饼图的 tooltip，这里对应放极坐标的 data 值
+                    name: '已用',
+                    itemStyle: {
+                        color: 'rgba(255, 198, 93, 0.4)',
+                    }
+                },
+                {
+                    value: swap_free_space,
+                    name: '空闲',
+                    itemStyle: {
+                        color: 'rgba(127, 229, 253, 0.4)',
+                    }
+                }
+            ],
+        }
+    ],
+};
+eChart.setOption(option);
+};
+function bar6(disk_used_space,disk_available_space){
+var fChart = echarts.init(document.getElementById("fdiv"));
+option = {
+	backgroundColor:"#D3D3D3",
+	    title: {
+	        text: '磁盘状态',
+	        left:"center"
+	    },
+    tooltip: {
+        trigger: 'item',
+        formatter: e => {
+            return `
+                ${e.name}: ${e.data.value} GB<br/>
+            `
+        }
+    },
+    angleAxis: {
+        type: 'category',
+        // 去掉边线
+        axisLine: {
+            show: false
+        },
+    },
+    radiusAxis: {
+        max: 100,
+        // 去掉刻度线
+        axisLine: {
+            show: false
+        },
+        axisLabel: {
+            show: false
+        },
+        axisTick: {
+            show: false
+        },
+        splitLine: {
+            show: false
+        },
+    },
+    polar: {
+        radius: [0, '50%']
+    },
+    series: [
+        // 饼图
+        {
+            type: 'pie',
+            radius: [0, '50%'],
+            label: {
+                color: '#333',
+                lineHeight: 14,
+                formatter: e => {
+                    return `${e.name}: ${e.data.value} GB`
+                }
+            },
+            labelLine: {
+                length: 20,
+                lineStyle: {
+                    color: '#999'
+                }
+            },
+            itemStyle: {
+                borderWidth: 3,
+                borderColor: '#fff',
+                shadowColor: 'rgba(0, 0, 0, 0.2)',
+                shadowBlur: 6,
+                shadowOffsetY: 4
+            },
+            data: [
+                {
+                    value: disk_used_space,
+                     // 因为触发的是饼图的 tooltip，这里对应放极坐标的 data 值
+                    name: '已用',
+                    itemStyle: {
+                        color: 'rgba(205, 92, 92, 0.4)',
+                    }
+                },
+                {
+                    value: disk_available_space,
+                    name: '可用',
+                    itemStyle: {
+                        color: 'rgba(144, 239, 144, 0.4)',
+                    }
+                }
+            ],
+        }
+    ],
+};
+fChart.setOption(option);
+};
+function bar7(receive_total,transmit_total){
+var gChart = echarts.init(document.getElementById("gdiv"));
+option = {
+	backgroundColor:"#D3D3D3",
+	    title: {
+	        text: '网络状态',
+	        left:"center"
+	    },
+    tooltip: {
+        trigger: 'item',
+        formatter: e => {
+            return `
+                ${e.name}: ${e.data.value} GB<br/>
+            `
+        }
+    },
+    angleAxis: {
+        type: 'category',
+        // 去掉边线
+        axisLine: {
+            show: false
+        },
+    },
+    radiusAxis: {
+        max: 100,
+        // 去掉刻度线
+        axisLine: {
+            show: false
+        },
+        axisLabel: {
+            show: false
+        },
+        axisTick: {
+            show: false
+        },
+        splitLine: {
+            show: false
+        },
+    },
+    polar: {
+        radius: [0, '50%']
+    },
+    series: [
+        // 饼图
+        {
+            type: 'pie',
+            radius: [0, '50%'],
+            label: {
+                color: '#333',
+                lineHeight: 14,
+                formatter: e => {
+                    return `${e.name}: ${e.data.value} GB`
+                }
+            },
+            labelLine: {
+                length: 20,
+                lineStyle: {
+                    color: '#999'
+                }
+            },
+            itemStyle: {
+                borderWidth: 3,
+                borderColor: '#fff',
+                shadowColor: 'rgba(0, 0, 0, 0.2)',
+                shadowBlur: 6,
+                shadowOffsetY: 4
+            },
+            data: [
+                {
+                    value: receive_total,
+                     // 因为触发的是饼图的 tooltip，这里对应放极坐标的 data 值
+                    name: '已接收',
+                    itemStyle: {
+                        color: 'rgba(0, 255, 127, 0.4)',
+                    }
+                },
+                {
+                    value: transmit_total,
+                    name: '已发送',
+                    itemStyle: {
+                        color: 'rgba(70, 130, 180, 0.4)',
+                    }
+                }
+            ],
+        }
+    ],
+};
+gChart.setOption(option);
+};
+setInterval(function (){
+	$.ajax({
+		url: "status.json",
+  		type: "get",
+  		dataType: "json",
+  		async: false,
+		cache: false,
+  		success: function (res){
+			run_time = res.run_time;
+			last1 = res.last1;
+			last5 = res.last5;
+			last15 = res.last15;
+			cpu_usage = res.cpu_usage;
+			cpu_temp = res.cpu_temp;
+			mem_total_space = res.mem_total_space;
+			mem_used_space = res.mem_used_space;
+			mem_free_space = res.mem_free_space;
+			mem_available_space = res.mem_available_space;
+			mem_usage = res.mem_usage;
+			swap_total_space = res.swap_total_space;
+			swap_used_space = res.swap_used_space;
+			swap_free_space = res.swap_free_space;
+			disk_total_space = res.disk_total_space;
+			disk_used_space = res.disk_used_space;
+			disk_available_space = res.disk_available_space;
+			disk_usage = res.disk_usage;
+			receive_speed = res.receive_speed;
+			transmit_speed = res.transmit_speed;
+			receive_total = res.receive_total;
+			transmit_total = res.transmit_total;
+			lastest_time = res.lastest_time;
+			bar0(run_time,lastest_time,cpu_temp);
+			bar1(last1,last5,last15);
+			bar2(cpu_usage,mem_usage,disk_usage);
+			bar3(receive_speed,transmit_speed);
+			bar4(mem_used_space,mem_free_space,mem_available_space);
+			bar5(swap_used_space,swap_free_space);
+			bar6(disk_used_space,disk_available_space);
+			bar7(receive_total,transmit_total);
+  		}
+	});
+}, 1000);
+</script>
+</body>
+</html>
