@@ -69,9 +69,9 @@ receive_speed=`awk 'BEGIN{printf("%.2f",('$receive_new' - '$receive_old') / 1024
 transmit_speed=`awk 'BEGIN{printf("%.2f",('$transmit_new' - '$transmit_old') / 1024 / '$interval')}'`
 receive_total=`awk 'BEGIN{printf("%.2f",'$receive_new' / 1024 / 1024 / 1024)}'`
 transmit_total=`awk 'BEGIN{printf("%.2f",'$transmit_new' / 1024 / 1024 / 1024)}'`
-cpu_old_total=`echo $cpu_old | awk '{print $2+$3+$4+$5+$6+$7+$8+$9+$10+$11}'`
-cpu_new_total=`echo $cpu_new | awk '{print $2+$3+$4+$5+$6+$7+$8+$9+$10+$11}'`
-cpu_usage=`awk 'BEGIN{printf("%.2f",('$(echo $cpu_new | awk '{print $2+$3+$4}')' - '$(echo $cpu_old | awk '{print $2+$3+$4}')') * 100 / ('$cpu_new_total' - '$cpu_old_total') / '$interval')}'`
+cpu_old_total=`echo $cpu_old | awk '{printf "%.0f", $2+$3+$4+$5+$6+$7+$8+$9+$10+$11}'`
+cpu_new_total=`echo $cpu_new | awk '{printf "%.0f", $2+$3+$4+$5+$6+$7+$8+$9+$10+$11}'`
+cpu_usage=`awk 'BEGIN{printf("%.2f",('$(echo $cpu_new | awk '{printf "%.0f", $2+$3+$4}')' - '$(echo $cpu_old | awk '{printf "%.0f", $2+$3+$4}')') * 100 / ('$cpu_new_total' - '$cpu_old_total') / '$interval')}'`
 if [ "$cpu_temp_support" != "error" ]
 then
 	cpu_temp=`awk 'BEGIN{printf("%.2f",'$(cat /sys/class/thermal/thermal_zone0/temp)' / 1000)}'`
